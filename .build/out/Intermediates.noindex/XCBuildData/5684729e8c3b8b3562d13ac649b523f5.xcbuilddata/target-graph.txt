@@ -1,4 +1,0 @@
-Target dependency graph (2 targets)
-Target 'AllExcludingTests' in project 'Aggregate'
-➜ Explicit dependency on target 'DDCMenuBar-product' in project 'DDCMenuBar'
-Target 'DDCMenuBar-product' in project 'DDCMenuBar' (no dependencies)
