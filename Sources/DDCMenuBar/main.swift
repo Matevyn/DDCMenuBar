@@ -23,6 +23,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         workspace.addObserver(forName: NSWorkspace.willPowerOffNotification, object: nil, queue: .main) { [weak self] _ in
             self?.powerOff(nil)
         }
+        
+        // Turn on monitor when Mac wakes up
+        workspace.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: .main) { [weak self] _ in
+            self?.powerOn(nil)
+        }
     }
     
     func updateCurrentInput() {
@@ -206,7 +211,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     
-    @objc func powerOn(_ sender: NSMenuItem) {
+    @objc func powerOn(_ sender: NSMenuItem? = nil) {
         let task = Process()
         task.executableURL = URL(fileURLWithPath: "/opt/homebrew/bin/ddcctl")
         task.arguments = ["vcp", "0xD6", "0x01"]
