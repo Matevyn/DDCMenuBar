@@ -64,7 +64,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         menu.addItem(NSMenuItem.separator())
         
-        // Only DisplayPort 2 and HDMI 1
+        // Input options
         let inputs: [(String, String)] = [
             ("DisplayPort 2", "dp2"),
             ("HDMI 1", "hdmi1")
@@ -83,6 +83,25 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
             menu.addItem(item)
         }
+        
+        menu.addItem(NSMenuItem.separator())
+        
+        // Power control
+        let powerOffItem = NSMenuItem(
+            title: "Vypnúť monitor",
+            action: #selector(powerOff(_:)),
+            keyEquivalent: ""
+        )
+        powerOffItem.target = self
+        menu.addItem(powerOffItem)
+        
+        let powerOnItem = NSMenuItem(
+            title: "Zapnúť monitor",
+            action: #selector(powerOn(_:)),
+            keyEquivalent: ""
+        )
+        powerOnItem.target = self
+        menu.addItem(powerOnItem)
         
         menu.addItem(NSMenuItem.separator())
         
@@ -162,6 +181,32 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             task.waitUntilExit()
         } catch {
             print("Failed to set volume: \(error)")
+        }
+    }
+    
+    @objc func powerOff(_ sender: NSMenuItem) {
+        let task = Process()
+        task.executableURL = URL(fileURLWithPath: "/opt/homebrew/bin/ddcctl")
+        task.arguments = ["vcp", "0xD6", "0x02"]
+        
+        do {
+            try task.run()
+            task.waitUntilExit()
+        } catch {
+            print("Failed to power off: \(error)")
+        }
+    }
+    
+    @objc func powerOn(_ sender: NSMenuItem) {
+        let task = Process()
+        task.executableURL = URL(fileURLWithPath: "/opt/homebrew/bin/ddcctl")
+        task.arguments = ["vcp", "0xD6", "0x01"]
+        
+        do {
+            try task.run()
+            task.waitUntilExit()
+        } catch {
+            print("Failed to power on: \(error)")
         }
     }
     
