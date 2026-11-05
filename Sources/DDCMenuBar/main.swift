@@ -14,6 +14,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         
         updateCurrentInput()
+        
+        // Turn off monitor when Mac sleeps or shuts down
+        let workspace = NSWorkspace.shared.notificationCenter
+        workspace.addObserver(forName: NSWorkspace.willSleepNotification, object: nil, queue: .main) { [weak self] _ in
+            self?.powerOff(nil)
+        }
+        workspace.addObserver(forName: NSWorkspace.willPowerOffNotification, object: nil, queue: .main) { [weak self] _ in
+            self?.powerOff(nil)
+        }
     }
     
     func updateCurrentInput() {
@@ -184,7 +193,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     
-    @objc func powerOff(_ sender: NSMenuItem) {
+    @objc func powerOff(_ sender: NSMenuItem? = nil) {
         let task = Process()
         task.executableURL = URL(fileURLWithPath: "/opt/homebrew/bin/ddcctl")
         task.arguments = ["vcp", "0xD6", "0x02"]
